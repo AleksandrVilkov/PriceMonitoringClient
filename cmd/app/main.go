@@ -1,16 +1,17 @@
 package main
 
 import (
-	"PriceMonitoringClient/internal"
+	"PriceMonitoringClient/internal/config"
+	"PriceMonitoringClient/internal/message"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func main() {
-	bot, err := tgbotapi.NewBotAPI(internal.GetToken("configs/token.json"))
+	bot, err := tgbotapi.NewBotAPI(config.GetToken("configs/token.json"))
 	if err != nil {
 		panic(err)
 	}
-	//bot.Debug = true
+	bot.Debug = true
 	updateConfig := tgbotapi.NewUpdate(0)
 	updateConfig.Timeout = 30
 	updates := bot.GetUpdatesChan(updateConfig)
@@ -18,6 +19,9 @@ func main() {
 		if update.Message == nil {
 			continue
 		}
-		internal.SendMessage(bot, update.Message.Chat.ID, update.Message.MessageID, "f")
+		message.SendMessage(bot,
+			update.Message.Chat.ID,
+			update.Message.MessageID,
+			message.HandleMessage(update.Message.Text, int(update.Message.Chat.ID)))
 	}
 }
