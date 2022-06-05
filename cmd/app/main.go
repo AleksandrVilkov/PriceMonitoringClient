@@ -2,7 +2,7 @@ package main
 
 import (
 	"PriceMonitoringClient/internal/config"
-	"PriceMonitoringClient/internal/message"
+	message2 "PriceMonitoringClient/internal/model/message"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -19,9 +19,9 @@ func main() {
 		if update.Message == nil {
 			continue
 		}
-		message.SendMessage(bot,
+		message2.SendMessage(bot,
 			update.Message.Chat.ID,
 			update.Message.MessageID,
-			message.HandleMessage(update.Message.Text, int(update.Message.Chat.ID)))
+			message2.HandleMessage(update.Message.Text, int(update.Message.Chat.ID)))
 	}
 }
