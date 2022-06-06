@@ -16,14 +16,14 @@ type MonitoringList struct {
 func (monitoringList *MonitoringList) SaveUrlForMonitoring(url string, userID string) string {
 
 	message := map[string]interface{}{
-		"url": "dfsadfsasdffdsdfs",
+		"url": url,
 	}
 
 	bytesRepresentation, err := json.Marshal(message)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	reqUrl := GetStartPath() + "/api/monitoring/add/" + userID
+	reqUrl := GetStartPath() + "/api/monitoring/add/" + userID + "?url=" + url
 	response, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
 		return ""

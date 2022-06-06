@@ -46,7 +46,13 @@ func HandleMessage(testMessage string, status user.Status, userID int) (string, 
 	}
 
 	if status == user.ADD_PRODUCT {
+		var name priceMonitoringConnector.MonitoringList
+		var result = name.SaveUrlForMonitoring(testMessage, strconv.Itoa(userID))
+		if strings.Contains(result, "") {
+			return "Ошибка", user.NONE
+		}
 
+		return "успех", user.NONE
 	}
 
 	if status == user.DELETE_PRODUCT {
