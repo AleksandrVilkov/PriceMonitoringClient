@@ -9,8 +9,11 @@ import (
 	"net/http"
 )
 
+type MonitoringList struct {
+}
+
 //TODO не работает 400
-func SaveUrlForMonitoring(url string, userID string) string {
+func (monitoringList *MonitoringList) SaveUrlForMonitoring(url string, userID string) string {
 
 	message := map[string]interface{}{
 		"url": "dfsadfsasdffdsdfs",
@@ -34,7 +37,7 @@ func SaveUrlForMonitoring(url string, userID string) string {
 	return string(body)
 }
 
-func GetAllUserUrls(userID string) []string {
+func (monitoringList *MonitoringList) GetAllUserUrls(userID string) []string {
 	resp, err := http.Get(GetStartPath() + "/api/monitoring/getAllURLs/" + userID)
 	if err != nil {
 		log.Fatalln(err)

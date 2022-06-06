@@ -23,7 +23,7 @@ func main() {
 			continue
 		}
 
-		answer, userStatus := message2.HandleMessage(update.Message.Text, userStatuses[int(update.Message.Chat.ID)])
+		answer, userStatus := message2.HandleMessage(update.Message.Text, userStatuses[int(update.Message.Chat.ID)], int(update.Message.Chat.ID))
 		message2.SendMessage(bot,
 			update.Message.Chat.ID,
 			update.Message.MessageID, answer)
