@@ -52,6 +52,7 @@ func (monitoringList *MonitoringList) GetAllUserUrls(userID string) []string {
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		panic(err)
+		return result
 	}
 	return result
 }

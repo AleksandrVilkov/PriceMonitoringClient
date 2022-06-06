@@ -3,6 +3,7 @@ package message
 import (
 	"PriceMonitoringClient/internal/model/user"
 	"PriceMonitoringClient/internal/priceMonitoringConnector"
+	"strconv"
 	"strings"
 )
 
@@ -23,7 +24,7 @@ func HandleMessage(testMessage string, status user.Status, userID int) (string, 
 
 	if strings.Compare(strings.ToLower(testMessage), GET_ALL_URLS) == 0 {
 		var name priceMonitoringConnector.MonitoringList
-		var urls = name.GetAllUserUrls(string(userID))
+		var urls = name.GetAllUserUrls(strconv.Itoa(userID))
 		var result = ""
 		for _, url := range urls {
 			result = result + "\n" + url
