@@ -19,20 +19,26 @@ func HandleMessage(testMessage string, status user.Status, userID int) (string, 
 	}
 
 	if strings.Compare(strings.ToLower(testMessage), GET_DYNAMIC) == 0 {
-		return "выбрана команда Показать динамику", user.NONE
+		var res = priceMonitoringConnector.GetDynamic(strconv.Itoa(userID))
+		var result = ""
+		for key, value := range res {
+			result = result + "🛒 Товар: " + key + ":\n"
+			result = result + getStringUniqueProducts(value) + "\n"
+
+		}
+		return result, user.NONE
 	}
 
 	if strings.Compare(strings.ToLower(testMessage), GET_ALL_URLS) == 0 {
-		var name priceMonitoringConnector.MonitoringList
-		var urls = name.GetAllUserUrls(strconv.Itoa(userID))
+
 		var result = ""
-		for _, url := range urls {
-			result = result + "\n" + url
+		for _, url := range priceMonitoringConnector.GetAllUserUrls(strconv.Itoa(userID)) {
+			result = result + "\n\n" + url
 		}
 		return GET_ALL_URLS_MSG + result, user.NONE
 	}
+
 	if strings.Compare(strings.ToLower(testMessage), DELETE_URL) == 0 {
-		//userStatuses[userID] = user.DELETE_PRODUCT
 		return "выбрана команда  удалить url", user.DELETE_PRODUCT
 	}
 
@@ -46,13 +52,8 @@ func HandleMessage(testMessage string, status user.Status, userID int) (string, 
 	}
 
 	if status == user.ADD_PRODUCT {
-		var name priceMonitoringConnector.MonitoringList
-		var result = name.SaveUrlForMonitoring(testMessage, strconv.Itoa(userID))
-		if strings.Contains(result, "") {
-			return "Ошибка", user.NONE
-		}
-
-		return "успех", user.NONE
+		var result = priceMonitoringConnector.SaveUrlForMonitoring(testMessage, strconv.Itoa(userID))
+		return result, user.NONE
 	}
 
 	if status == user.DELETE_PRODUCT {

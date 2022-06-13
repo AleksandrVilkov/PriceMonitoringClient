@@ -7,13 +7,21 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
-type MonitoringList struct {
+type Message struct {
+	Status string `json:"status"`
+	Text   string `json:"messageText"`
 }
 
-//TODO не работает 400
-func (monitoringList *MonitoringList) SaveUrlForMonitoring(url string, userID string) string {
+type Product struct {
+	Date  string `json:"date"`
+	Price string `json:"price"`
+	Shop  string `json:"shop"`
+}
+
+func SaveUrlForMonitoring(url string, userID string) string {
 
 	message := map[string]interface{}{
 		"url": url,
@@ -26,18 +34,20 @@ func (monitoringList *MonitoringList) SaveUrlForMonitoring(url string, userID st
 	reqUrl := GetStartPath() + "/api/monitoring/add/" + userID + "?url=" + url
 	response, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
-		return ""
+		return "Произошла неизвестная ошибка"
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
-	f := string(body)
-	if err != nil {
-		log.Fatalln(err, f)
+	var res Message
+	err = json.Unmarshal(body, &res)
+	if strings.Contains(res.Status, "SUCCESS") {
+		return "Все прошло отлично. " + res.Text
+	} else {
+		return "Ошибочка вышла. " + res.Text
 	}
-	return string(body)
 }
 
-func (monitoringList *MonitoringList) GetAllUserUrls(userID string) []string {
+func GetAllUserUrls(userID string) []string {
 	resp, err := http.Get(GetStartPath() + "/api/monitoring/getAllURLs/" + userID)
 	if err != nil {
 		log.Fatalln(err)
@@ -46,8 +56,6 @@ func (monitoringList *MonitoringList) GetAllUserUrls(userID string) []string {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Println(string(body))
-
 	var result []string
 	err = json.Unmarshal(body, &result)
 	if err != nil {
@@ -55,4 +63,21 @@ func (monitoringList *MonitoringList) GetAllUserUrls(userID string) []string {
 		return result
 	}
 	return result
+}
+
+func GetDynamic(userID string) map[string][]Product {
+	resp, err := http.Get(GetStartPath() + "/api/analytics/getDynamicPrice/" + userID)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	var f = string(body)
+	fmt.Println(f)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	var response map[string][]Product
+	err = json.Unmarshal(body, &response)
+
+	return response
 }
